@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'main', credentialsId: 'github-credentials', url: 'git@github.com:nithin-voiro/docker-image-push.git'
+                git branch: 'main', credentialsId: 'nithin-voiro', url: 'git@github.com:nithin-voiro/docker-image-push.git'
             }
         }
 
