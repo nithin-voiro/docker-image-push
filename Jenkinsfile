@@ -10,33 +10,25 @@ pipeline {
     }
 
     stages {
-        stage('Checkout Code') {
+        stage('Build and Push Docker Image') {
             steps {
-                git 'https://github.com/your-repo/sample-app.git'
-            }
-        }
-
-        stage('Authenticate with Google Cloud') {
-            steps {
-                withCredentials([file(credentialsId: 'gcp-service-account', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+                withCredentials([file(credentialsId: 'gcp-service-account', variable: 'GOOGLE_APPLICATION_CREDENTIALS'), 
+                                string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
                     sh '''
+                    # Clone Repository
+                    git clone https://$GITHUB_TOKEN@github.com/nithin-voiro/docker-image-push.git
+                    cd docker-image-push
+                    
+                    # Authenticate with Google Cloud
                     gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
                     gcloud config set project $GCP_PROJECT_ID
                     gcloud auth configure-docker $GCP_REGION-docker.pkg.dev
+                    
+                    # Build and Push Docker Image
+                    docker build -t $GCP_REGION-docker.pkg.dev/$GCP_PROJECT_ID/$REPO_NAME/$IMAGE_NAME:latest .
+                    docker push $GCP_REGION-docker.pkg.dev/$GCP_PROJECT_ID/$REPO_NAME/$IMAGE_NAME:latest
                     '''
                 }
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                sh 'docker build -t $GCP_REGION-docker.pkg.dev/$GCP_PROJECT_ID/$REPO_NAME/$IMAGE_NAME:latest .'
-            }
-        }
-
-        stage('Push to Google Artifact Registry') {
-            steps {
-                sh 'docker push $GCP_REGION-docker.pkg.dev/$GCP_PROJECT_ID/$REPO_NAME/$IMAGE_NAME:latest'
             }
         }
     }
