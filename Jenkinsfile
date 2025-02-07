@@ -3,8 +3,8 @@ pipeline {
 
     environment {
         GCP_PROJECT_ID = 'voirophoenix-e6030'
-        GCP_REGION = 'us-central1'
-        REPO_NAME = 'my-docker-repo'
+        GCP_REGION = 'aisa-south1'
+        REPO_NAME = 'voiro-dev'
         IMAGE_NAME = 'sample-app'
         SERVICE_ACCOUNT_CREDENTIALS = credentials('gcp-service-account')
     }
@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'main', credentialsId: 'github-ssh-key', url: 'git@github.com:nithin-voiro/docker-image-push.git'
+                git branch: 'main', credentialsId: 'nithingitcreds', url: 'https://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@github.com/nithin-voiro/docker-image-push.git'
             }
         }
 
