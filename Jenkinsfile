@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        GCP_PROJECT_ID = 'YOUR_PROJECT_ID'
+        GCP_PROJECT_ID = 'voirophoenix-e6030'
         GCP_REGION = 'us-central1'
         REPO_NAME = 'my-docker-repo'
         IMAGE_NAME = 'sample-app'
@@ -12,16 +12,13 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git 'git@github.com:nithin-voiro/docker-image-push.git'
+                git branch: 'main', credentialsId: 'github-credentials', url: 'git@github.com:nithin-voiro/docker-image-push.git'
             }
         }
 
         stage('Build and Push Docker Image') {
             steps {
-                withCredentials([
-                    file(credentialsId: 'gcp-service-account', variable: 'GOOGLE_APPLICATION_CREDENTIALS'), 
-                    string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')
-                ]) {
+                withCredentials([file(credentialsId: 'gcp-service-account', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
                     sh '''
                     # Authenticate with Google Cloud
                     gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
@@ -37,4 +34,3 @@ pipeline {
         }
     }
 }
-
