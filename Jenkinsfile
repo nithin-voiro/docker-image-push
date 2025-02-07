@@ -10,15 +10,19 @@ pipeline {
     }
 
     stages {
+        stage('Checkout Code') {
+            steps {
+                git 'git@github.com:nithin-voiro/docker-image-push.git'
+            }
+        }
+
         stage('Build and Push Docker Image') {
             steps {
-                withCredentials([file(credentialsId: 'gcp-service-account', variable: 'GOOGLE_APPLICATION_CREDENTIALS'), 
-                                string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
+                withCredentials([
+                    file(credentialsId: 'gcp-service-account', variable: 'GOOGLE_APPLICATION_CREDENTIALS'), 
+                    string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')
+                ]) {
                     sh '''
-                    # Clone Repository
-                    git clone https://$GITHUB_TOKEN@github.com/nithin-voiro/docker-image-push.git
-                    cd docker-image-push
-                    
                     # Authenticate with Google Cloud
                     gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
                     gcloud config set project $GCP_PROJECT_ID
@@ -33,3 +37,4 @@ pipeline {
         }
     }
 }
+
