@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'VTECH-771-be-env-setup', credentialsId: 'nithingitcreds', url: 'https://github.com/anilkarat/thinktank.git'
+                git branch: 'VTECH-771-be-env-setup', credentialsId: 'nitinttjenkinscreds', url: 'https://github.com/anilkarat/thinktank.git'
             }
         }
 
